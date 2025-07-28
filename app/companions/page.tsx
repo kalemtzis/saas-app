@@ -28,14 +28,14 @@ const CompanionsLibrary = async ({ searchParams }: SearchParams) => {
 
           {newCompanionPermission ? 
             <Link href='/companions/new'>
-              <button className='relative border border-black rounded-lg items-center flex gap-2 px-2 py-1 h-fit cursor-pointer bg-primary text-white'>
+              <button className='relative border border-black rounded-lg items-center flex gap-2 px-2 py-1 h-fit cursor-pointer bg-primary text-white max-sm:hidden'>
                 Companion
                 <PlusIcon size={15} />
               </button>
             </Link>
           :
             <Link href='/subscription'>
-              <button className='relative'>
+              <button className='relative max-sm:hidden'>
                 Upgrade Your Plan
                 <Star />
               </button>
