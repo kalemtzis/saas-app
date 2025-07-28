@@ -1,3 +1,4 @@
+import { Star } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import React from 'react'
@@ -9,9 +10,10 @@ interface CompanionCardProps {
   subject: string;
   duration: number;
   color: string;
+  convertationPermission: boolean;
 }
 
-const CompanionCard = ({ id, name, topic, subject, duration, color }: CompanionCardProps) => {
+const CompanionCard = ({ id, name, topic, subject, duration, color, convertationPermission }: CompanionCardProps) => {
   return (
     <article className='companion-card' style={{ backgroundColor: color }}>
       <div className='flex justify-between items-center'>
@@ -35,11 +37,20 @@ const CompanionCard = ({ id, name, topic, subject, duration, color }: CompanionC
         </p>
       </div>
 
-      <Link href={`/companions/${id}`} className='w-full'>
-        <button className='btn-primary w-full justify-center'>
-          Launch Lesson
-        </button>
-      </Link>
+      {convertationPermission ?
+        <Link href={`/companions/${id}`} className='w-full'>
+          <button className='btn-primary w-full justify-center'>
+            Launch Lesson
+          </button>
+        </Link>
+      :
+        <Link href={`/subscription`} className='w-full'>
+          <button className='btn-primary w-full justify-center'>
+            Upgrade Your Plan
+            <Star />
+          </button>
+        </Link>
+      }
     </article>
   )
 }

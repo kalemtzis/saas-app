@@ -1,9 +1,9 @@
 import CompanionCard from '@/components/CompanionCard';
 import SearchInput from '@/components/SearchInput';
 import SubjectFilter from '@/components/SubjectFilter';
-import { getAllCompanions } from '@/lib/actions/companion.actions';
+import { getAllCompanions, getConvertationPermisions, newCompanionPermissions } from '@/lib/actions/companion.actions';
 import { getSubjectColor } from '@/lib/utils';
-import { PlusIcon } from 'lucide-react';
+import { PlusIcon, Star } from 'lucide-react';
 import Link from 'next/link';
 import React from 'react'
 
@@ -13,6 +13,8 @@ const CompanionsLibrary = async ({ searchParams }: SearchParams) => {
   const topic = filters.topic ? filters.topic : '';
 
   const companions = await getAllCompanions({ subject, topic });
+  const { permission: newCompanionPermission } = await newCompanionPermissions();
+  const { permission: convertaionPermission } = await getConvertationPermisions();
 
   return (
     <main>
@@ -24,18 +26,32 @@ const CompanionsLibrary = async ({ searchParams }: SearchParams) => {
 
           <SubjectFilter />
 
-          <Link href='/companions/new'>
-            <button className='relative border border-black rounded-lg items-center flex gap-2 px-2 py-1 h-fit cursor-pointer bg-primary text-white'>
-              Companion
-              <PlusIcon size={15} />
-            </button>
-          </Link>
+          {newCompanionPermission ? 
+            <Link href='/companions/new'>
+              <button className='relative border border-black rounded-lg items-center flex gap-2 px-2 py-1 h-fit cursor-pointer bg-primary text-white'>
+                Companion
+                <PlusIcon size={15} />
+              </button>
+            </Link>
+          :
+            <Link href='/subscription'>
+              <button className='relative'>
+                Upgrade Your Plan
+                <Star />
+              </button>
+            </Link>
+          }
         </div>
       </section>   
 
       <section className='companions-grid'>
           {companions.map(companion => (
-            <CompanionCard key={companion.id} {...companion} color={getSubjectColor(companion.subject)} />
+            <CompanionCard 
+              key={companion.id} 
+              {...companion} 
+              color={getSubjectColor(companion.subject)} 
+              convertationPermission={convertaionPermission} 
+            />
           ))}
       </section>
     </main>

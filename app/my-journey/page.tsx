@@ -7,12 +7,15 @@ import {
 } from "@/components/ui/accordion"
 import { currentUser } from '@clerk/nextjs/server'
 import { redirect } from 'next/navigation';
-import { getUserCompanions, getUserSessions } from '@/lib/actions/companion.actions';
+import { getConvertationPermisions, getUserCompanions, getUserSessions, newCompanionPermissions } from '@/lib/actions/companion.actions';
 import Image from 'next/image';
 import CompanionsList from '@/components/CompanionsList';
+import { InfinityIcon } from 'lucide-react';
 
 const Profile = async () => {
   const user = await currentUser();
+  const { limit: companionLimit } = await newCompanionPermissions();
+  const { limit: convertationLimit } = await getConvertationPermisions();
 
   if (!user) redirect('/sign-in');
 
@@ -39,7 +42,7 @@ const Profile = async () => {
             <div className='flex gap-2 items-center'>
               <Image src='/icons/check.svg' alt='checkmark' width={22} height={22} />
               <p className='text-2xl font-bold'>
-                {sessionHistory.length}
+                {sessionHistory.length} / {convertationLimit === 0 ? <InfinityIcon /> : convertationLimit}
               </p>
             </div>
             <div>Lessons Completed</div>
@@ -49,7 +52,7 @@ const Profile = async () => {
             <div className='flex gap-2 items-center'>
               <Image src='/icons/cap.svg' alt='cap' width={22} height={22} />
               <p className='text-2xl font-bold'>
-                {companions.length}
+                {companions.length} / {companionLimit === 0 ? <InfinityIcon /> : companionLimit}
               </p>
             </div>
             <div>Companions Created</div>

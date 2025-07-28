@@ -1,5 +1,5 @@
 import CompanionForm from '@/components/CompanionForm'
-import { NewCompanionPermissions } from '@/lib/actions/companion.actions';
+import { newCompanionPermissions } from '@/lib/actions/companion.actions';
 import { auth } from '@clerk/nextjs/server'
 import Image from 'next/image';
 import Link from 'next/link';
@@ -10,11 +10,11 @@ const NewCompanion = async () => {
   const { userId } = await auth();
   if (!userId) redirect('/sign-in');
 
-  const canCreateCompanion = await NewCompanionPermissions();
+  const { permission } = await newCompanionPermissions();
   
   return (
     <main className='min-lg:w-1/3 min-md:w-2/3 items-center justify-center'>
-      {canCreateCompanion ? 
+      {permission ? 
         <article className='w-full gap-4 flex flex-col'>
           <h1>Companion Builder</h1>
 

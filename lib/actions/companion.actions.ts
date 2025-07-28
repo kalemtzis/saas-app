@@ -91,13 +91,18 @@ export const getUserCompanions = async (userId: string) => {
     return data;
 }
 
-export const NewCompanionPermissions = async () => {
+interface Permission {
+    permit: boolean;
+    limit?: number;
+}
+
+export const newCompanionPermissions = async () => {
     const { userId, has } = await auth();
     const supabase = createSupabaseClient();
 
     let limit = 0;
-
-    if(has({ plan: 'pro' })) return true;
+    
+    if(has({ plan: 'pro' })) return { permission: true, limit: 0 };
     else if (has({ feature: '3_companion_limit' })) limit = 3;
     else if (has({ feature: '10_companion_limit' })) limit = 10;
 
@@ -107,7 +112,26 @@ export const NewCompanionPermissions = async () => {
 
     const companionCount = data?.length;
 
-    if (companionCount >= limit) return false;
+    if (companionCount >= limit) return { permission: false, limit: limit };
 
-    return true;
+    return { permission: true, limit: limit };
 }
+
+export const getConvertationPermisions = async () => {
+    const { userId, has } = await auth();
+    const supabase = createSupabaseClient();
+
+    if (has({ plan: 'pro' }) || has({ plan: 'core' })) return { permission: true, limit: 0 };
+
+    const limit = 10;
+
+    const { data, error } = await supabase.from('session_history').select('id').eq('user_id', userId);
+
+    if (error) throw new Error(error.message);
+
+    const sessionsCount = data?.length;
+
+    if (sessionsCount >= limit) return { permission: false, limit: limit };
+
+    return { permission: true, limit: limit };
+}  
